@@ -1,0 +1,28 @@
+package com.api.tests;
+
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+public class ShipmentTest {
+
+    @Test
+    public void testShipmentDetails() {
+        String apiUrl = "https://api.easypost.com/v2/shipments/shp_e0b570fd1d7d4b62bd206917eae5881a"; // API URL
+        String apiKey = "YOUR_API_KEY";  // Replace with actual API key
+
+        // Send API request
+        Response response = RestAssured.given()
+                .auth().basic(apiKey, "") // API Authentication
+                .get(apiUrl);
+
+        // Print response
+        System.out.println("Response: " + response.asPrettyString());
+
+        // Assertions
+         Assert.assertEquals(response.getStatusCode(), 200, "Expected status code: 200");
+        Assert.assertEquals(response.jsonPath().getFloat("selected_rate.retail_rate"), 12.0, "Retail rate should be 12");
+        Assert.assertTrue(response.jsonPath().getFloat("selected_rate.retail_rate") > response.jsonPath().getFloat("selected_rate.list_rate"), "Retail rate should be greater than list rate");
+    }
+}
